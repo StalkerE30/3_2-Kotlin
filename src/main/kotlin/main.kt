@@ -3,7 +3,7 @@ fun sumRateMasterMaestro(sumMonth: Int = 0, amount: Int): Int {
     val discountMonth = 75000_00 //лимит в месяц после которого берут процент по "MasterCard" и "Maestro"
     val rateTaxMasterMaestro = 0.006 //процент свыше месячного лимита по "MasterCard" и "Maestro"
     val fixTaxMasterMaestro = 20_00 //добавка свыше месячного лимита при переводах по "MasterCard" и "Maestro"
-    return if (sumMonthCurr < discountMonth) 0 else (amount * rateTaxMasterMaestro + fixTaxMasterMaestro).toInt()
+    return if (sumMonthCurr < discountMonth) 0 else ((sumMonthCurr-discountMonth) * rateTaxMasterMaestro + fixTaxMasterMaestro).toInt()
 }
 
 fun sumRateVisaMir(amount: Int): Int {
@@ -45,7 +45,7 @@ fun checkTransferAllCard(
 
 }
 
-fun checkTranferVKpay(sumMonth: Int = 0, amount: Int): Boolean {
+fun checkTransferVKpay(sumMonth: Int = 0, amount: Int): Boolean {
     val sumMonthCurr = sumMonth + amount
     val limitVkpayMonth = 40000_00 //месячный лимит на перевод по картам VkPay
     val vKCurrPay = 15000_00 //лимит на текущий перевод по картам VkPay
@@ -55,7 +55,7 @@ fun checkTranferVKpay(sumMonth: Int = 0, amount: Int): Boolean {
             false
         }
         (amount > vKCurrPay) -> {
-            println("Превышен лимит на текущий перевод карте VKpay ${vKCurrPay/100} руб.")
+            println("Превышен лимит на текущий перевод по карте VKpay ${vKCurrPay/100} руб.")
             false
         }
         else -> true
@@ -79,7 +79,7 @@ fun main() {
         "Visa", "Мир" -> if (checkTransferAllCard(amountDay, dayLimit, sumMonth, limitPullMonth, amount))
             result = sumRateVisaMir(amount)
 
-        "Vk Pay" -> if (checkTranferVKpay(sumMonth, amount)) result = sumRateVkPay(sumMonth, amount)
+        "Vk Pay" -> if (checkTransferVKpay(sumMonth, amount)) result = sumRateVkPay(sumMonth, amount)
         else -> result = -1
     }
     if (result >= 0) {
